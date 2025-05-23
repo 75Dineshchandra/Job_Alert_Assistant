@@ -138,7 +138,7 @@ pyyaml
 
 **Dinesh Chandra Gaddam**
 📧 [dineshchandragaddam2002@gmail.com](mailto:dineshchandragaddam2002@gmail.com)
-🔗 [LinkedIn](https://www.linkedin.com/in/dineshchandra-gaddam)
+🔗 [LinkedIn]([https://www.linkedin.com/in/dineshchandra-gaddam](https://www.linkedin.com/in/dineshchandra-gaddam002/))
 
 ---
 
