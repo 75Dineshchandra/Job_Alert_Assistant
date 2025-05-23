@@ -1,4 +1,4 @@
-# 📱 Real-Time Job Alert Agent
+# 📱 Real-Time Job Alert Assistant
 
 This Python-based job alert agent scrapes filtered LinkedIn job search URLs, detects new postings in real-time, and **sends email alerts** only for unseen jobs.
 It ensures **no duplicates are emailed**, even if LinkedIn adds tracking parameters to job URLs.
