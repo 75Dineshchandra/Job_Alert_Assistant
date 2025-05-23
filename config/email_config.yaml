@@ -1,0 +1,4 @@
+sender_email: sender@gmail.com
+sender_pass: "yyyy yyyy xxxx xxxx"   # <- Replace this before running
+receiver_email: rceivermail@gmail.com
+
