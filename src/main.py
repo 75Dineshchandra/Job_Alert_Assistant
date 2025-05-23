@@ -5,6 +5,7 @@ import json
 import pandas as pd
 from job_scraper import scrape_linkedin_jobs, scrape_jobs_from_url
 from emailer import send_email
+
 print("🔥 Script started")
 
 SEEN_JOBS_FILE = "data/seen_jobs.csv"
@@ -19,15 +20,22 @@ def load_seen_jobs():
 def save_seen_jobs(df):
     df.to_csv(SEEN_JOBS_FILE, index=False)
 
+def normalize_url(url):
+    return url.split("?")[0].strip().lower()
+
 def job_exists(seen_df, company, title, url):
+    title = title.strip().lower()
+    norm_url = normalize_url(url)
+
     return not seen_df[
         (seen_df["company"] == company) &
-        (seen_df["title"] == title) &
-        (seen_df["url"] == url)
+        (seen_df["title"].str.strip().str.lower() == title) &
+        (seen_df["url"].str.strip().str.lower().str.split("?").str[0] == norm_url)
     ].empty
 
 def run_realtime_agent():
     seen_jobs = load_seen_jobs()
+    print(f"[i] Loaded {len(seen_jobs)} previously seen jobs")
 
     with open(CAREER_URLS_FILE) as f:
         companies = json.load(f)
@@ -49,9 +57,15 @@ def run_realtime_agent():
         new_jobs = []
 
         for job in jobs:
-            if not job_exists(seen_jobs, company, job["title"], job["url"]):
-                seen_jobs.loc[len(seen_jobs)] = [company, job["title"], job["url"]]
-                new_jobs.append(job)
+            if job_exists(seen_jobs, company, job["title"], job["url"]):
+                print(f"[~] Already seen: {job['title']}")
+                continue
+
+            # Normalize and save unseen job
+            title_clean = job["title"].strip().lower()
+            url_clean = normalize_url(job["url"])
+            seen_jobs.loc[len(seen_jobs)] = [company, title_clean, url_clean]
+            new_jobs.append(job)
 
         if new_jobs:
             print(f"[+] New jobs at {company}: {len(new_jobs)}")
@@ -61,9 +75,10 @@ def run_realtime_agent():
             print(f"[=] No new jobs at {company}")
 
     save_seen_jobs(seen_jobs)
+    print(f"[✔] Seen jobs updated. Total seen: {len(seen_jobs)}")
 
 if __name__ == "__main__":
     print("[✔] Job Alert Agent started. Running every 60 minutes...")
     while True:
         run_realtime_agent()
-        time.sleep(3600)
+        time.sleep(60)  # Sleep for 1 hour
